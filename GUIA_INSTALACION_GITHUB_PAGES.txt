@@ -1,0 +1,65 @@
+PUBLICAR MI FINANZAS 15/30 GRATIS CON GITHUB PAGES
+
+Necesitas:
+- Una cuenta gratuita de GitHub.
+- El archivo Mi_Finanzas_15_30_Android.zip que ya descargaste.
+- Chrome en tu Samsung.
+
+PASO 1 — Crear cuenta
+1. Entra en https://github.com
+2. Crea una cuenta gratuita o inicia sesión.
+3. Verifica tu correo.
+
+PASO 2 — Crear el repositorio
+1. Pulsa el botón + y luego New repository.
+2. Nombre: mi-finanzas-15-30
+3. Selecciona Public.
+4. Marca Add a README file y pulsa Create repository.
+
+PASO 3 — Subir los archivos
+1. Entra al repositorio recién creado.
+2. Pulsa Add file > Upload files.
+3. En tu computadora, descomprime Mi_Finanzas_15_30_Android.zip.
+4. Abre la carpeta Mi_Finanzas_15_30 y selecciona index.html, manifest.webmanifest, sw.js e icon.svg.
+   (También puedes subir README.txt.)
+5. Arrastra esos archivos a GitHub.
+6. Pulsa Commit changes.
+
+IMPORTANTE: index.html debe quedar en la raíz del repositorio, no dentro de otra carpeta.
+
+PASO 4 — Activar GitHub Pages
+1. En el repositorio, abre Settings.
+2. En el menú lateral, entra en Pages.
+3. En Build and deployment, selecciona Deploy from a branch.
+4. Branch: main. Folder: /(root).
+5. Pulsa Save.
+6. Espera a que GitHub publique el sitio. La dirección normalmente será:
+   https://TU-USUARIO.github.io/mi-finanzas-15-30/
+
+PASO 5 — Instalar en tu Samsung
+1. Abre esa dirección en Google Chrome en el Samsung.
+2. Espera a que cargue completamente.
+3. Pulsa ⋮ > Instalar aplicación (o Añadir a pantalla de inicio).
+4. Confirma la instalación.
+5. Abre el icono Mi Finanzas 15/30.
+
+PASO 6 — Primer uso
+1. Crea un PIN de 4 a 8 dígitos y guárdalo en un lugar seguro.
+2. En Ajustes, verifica tus ingresos previstos:
+   Día 15: RD$15,000
+   Día 30: RD$13,227
+3. Registra cada ingreso, gasto y ahorro en su quincena.
+4. Descarga una copia de seguridad desde Reportes regularmente.
+
+SEGURIDAD Y DATOS
+- Los registros quedan guardados en el almacenamiento local del navegador del teléfono.
+- No borres los datos de Chrome ni el almacenamiento del sitio.
+- La copia JSON es importante: consérvala en Google Drive o en otro lugar seguro.
+- El PIN no cifra la base de datos; no guardes información bancaria confidencial.
+- Esta versión no sincroniza automáticamente con otros dispositivos.
+
+SI NO APARECE “INSTALAR”
+- Comprueba que la dirección comience con https://.
+- Confirma que manifest.webmanifest, sw.js e icon.svg estén subidos en la raíz.
+- Recarga la página y espera unos segundos.
+- En Chrome, usa ⋮ > Añadir a pantalla de inicio si está disponible.

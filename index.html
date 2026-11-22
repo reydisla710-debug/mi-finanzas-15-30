@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#123c2b">
+<meta name="description" content="Control personal de ingresos, gastos y ahorros por quincena.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<title>Mi Finanzas 15/30</title>
+<style>
+:root{--green:#155b3a;--bg:#f3f6f4;--card:#fff;--ink:#17251d;--muted:#66756b;--red:#b42318;--line:#e3eae5}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:linear-gradient(135deg,#123c2b,#19734a);color:white;padding:22px 18px 26px;border-radius:0 0 22px 22px}
+header h1{font-size:22px;margin:0 0 5px}header p{margin:0;color:#d5e9dc;font-size:13px}
+main{max-width:760px;margin:auto;padding:14px 14px 90px}
+nav{display:flex;gap:7px;overflow:auto;margin:0 0 14px;padding:3px 0}
+nav button{white-space:nowrap;border:1px solid var(--line);background:white;border-radius:20px;padding:9px 13px;color:var(--ink)}
+nav button.active{background:var(--green);color:white;border-color:var(--green)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px;margin:0 0 12px;box-shadow:0 2px 8px #123c2b08}
+h2{font-size:17px;margin:0 0 12px}.muted{color:var(--muted);font-size:12px}.big{font-size:29px;font-weight:750;letter-spacing:-1px}.green{color:var(--green)}.red{color:var(--red)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.metric{background:#f4f8f5;border-radius:12px;padding:12px}.metric span{display:block;color:var(--muted);font-size:12px}.metric b{display:block;font-size:18px;margin-top:4px}
+label{display:block;font-size:13px;font-weight:600;margin:10px 0 5px}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid #cbd8ce;border-radius:10px;background:white;font:inherit;color:var(--ink)}
+button.primary{background:var(--green);color:white;border:0;border-radius:11px;padding:12px 15px;font-weight:650;width:100%;margin-top:12px}
+button.secondary{background:white;color:var(--green);border:1px solid #b8cdbf;border-radius:10px;padding:10px 12px;font-weight:600}
+button.danger{background:#fff5f4;color:var(--red);border:1px solid #f2c6c2;border-radius:9px;padding:7px 10px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.row + .row{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}
+.item{padding:10px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}
+.hidden{display:none!important}.notice{background:#fff8e6;border:1px solid #f1dda5;border-radius:12px;padding:11px;font-size:13px}
+#lock{position:fixed;inset:0;background:#f3f6f4;z-index:9;display:flex;align-items:center;justify-content:center;padding:20px}
+.lockbox{max-width:360px;width:100%;background:white;border-radius:18px;padding:22px;box-shadow:0 8px 40px #0002}
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{text-align:left;padding:9px 5px;border-bottom:1px solid var(--line)}th{color:var(--muted)}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:12px}
+</style>
+</head>
+<body>
+<div id="lock">
+ <div class="lockbox">
+  <h1 style="margin:0 0 6px">🔐 Mi Finanzas 15/30</h1>
+  <p class="muted" id="lockText">Crea un PIN de 4 a 8 dígitos para proteger tus finanzas.</p>
+  <label for="pin">PIN</label><input id="pin" inputmode="numeric" type="password" maxlength="8" placeholder="4 a 8 dígitos">
+  <button class="primary" id="unlock">Continuar</button>
+  <p class="muted" id="pinError"></p>
+ </div>
+</div>
+<header><h1>Mi Finanzas 15/30</h1><p>Tu dinero organizado, quincena por quincena.</p></header>
+<main>
+ <div class="row" style="margin:4px 0 12px">
+  <div><div class="muted">Mes de trabajo</div><strong id="monthLabel"></strong></div>
+  <input id="month" type="month" style="max-width:165px">
+ </div>
+ <nav>
+  <button class="active" data-tab="home">Resumen</button><button data-tab="entry">Registrar</button><button data-tab="history">Historial</button><button data-tab="reports">Reportes</button><button data-tab="settings">Ajustes</button>
+ </nav>
+ <section id="home">
+  <div class="card">
+   <div class="muted">BALANCE DEL MES</div><div class="big green" id="balance">RD$0.00</div>
+   <div class="grid" style="margin-top:12px">
+    <div class="metric"><span>Ingresos</span><b id="incomeTotal">RD$0</b></div>
+    <div class="metric"><span>Gastos</span><b id="expenseTotal">RD$0</b></div>
+    <div class="metric"><span>Ahorros</span><b id="savingTotal">RD$0</b></div>
+    <div class="metric"><span>Disponible</span><b id="available">RD$0</b></div>
+   </div>
+  </div>
+  <div class="card"><h2>Quincena del 15</h2><div class="grid">
+   <div class="metric"><span>Ingresos</span><b id="i15">RD$0</b></div><div class="metric"><span>Gastos</span><b id="e15">RD$0</b></div>
+   <div class="metric"><span>Ahorros</span><b id="s15">RD$0</b></div><div class="metric"><span>Disponible</span><b id="a15">RD$0</b></div>
+  </div></div>
+  <div class="card"><h2>Quincena del 30</h2><div class="grid">
+   <div class="metric"><span>Ingresos</span><b id="i30">RD$0</b></div><div class="metric"><span>Gastos</span><b id="e30">RD$0</b></div>
+   <div class="metric"><span>Ahorros</span><b id="s30">RD$0</b></div><div class="metric"><span>Disponible</span><b id="a30">RD$0</b></div>
+  </div></div>
+  <div class="card"><h2>Movimientos recientes</h2><div id="recent" class="muted">Todavía no hay movimientos este mes.</div></div>
+ </section>
+ <section id="entry" class="hidden">
+  <div class="card"><h2>Registrar movimiento</h2>
+   <label>Tipo</label><select id="type"><option value="income">Ingreso</option><option value="expense">Gasto</option><option value="saving">Ahorro</option></select>
+   <label>Descripción</label><input id="desc" placeholder="Ej. Salario, transporte, comida...">
+   <label>Monto (RD$)</label><input id="amount" type="number" min="0.01" step="0.01" placeholder="0.00">
+   <label>Quincena</label><select id="period"><option value="15">Día 15</option><option value="30">Día 30</option></select>
+   <label>Fecha</label><input id="date" type="date">
+   <label>Categoría</label><select id="category"><option>Salario</option><option>Alimentación</option><option>Transporte</option><option>Vivienda</option><option>Servicios</option><option>Deudas</option><option>Salud</option><option>Familia</option><option>Compras</option><option>Ahorro</option><option>Otros</option></select>
+   <label>Nota (opcional)</label><textarea id="note" rows="2" placeholder="Detalle adicional"></textarea>
+   <button class="primary" id="save">Guardar movimiento</button>
+  </div>
+ </section>
+ <section id="history" class="hidden">
+  <div class="card"><h2>Historial del mes</h2><div id="historyList" class="muted">Sin movimientos.</div></div>
+ </section>
+ <section id="reports" class="hidden">
+  <div class="card"><h2>Reporte mensual</h2><div id="reportSummary"></div><button class="secondary" id="csv" style="width:100%;margin-top:12px">Exportar movimientos a CSV</button><button class="secondary" id="backup" style="width:100%;margin-top:8px">Descargar copia de seguridad</button></div>
+  <div class="card"><h2>Historial de meses</h2><p class="muted">Selecciona otro mes en la parte superior para consultar sus movimientos y balance.</p></div>
+ </section>
+ <section id="settings" class="hidden">
+  <div class="card"><h2>Configuración inicial</h2><p class="muted">Puedes cambiar estos valores cuando cambie tu salario o presupuesto.</p>
+   <label>Ingreso previsto día 15 (RD$)</label><input id="salary15" type="number" min="0">
+   <label>Ingreso previsto día 30 (RD$)</label><input id="salary30" type="number" min="0">
+   <button class="primary" id="saveSettings">Guardar ingresos previstos</button>
+  </div>
+  <div class="card"><h2>Seguridad</h2><label>Cambiar PIN (4 a 8 dígitos)</label><input id="newPin" type="password" inputmode="numeric" maxlength="8"><button class="secondary" id="changePin" style="width:100%;margin-top:10px">Actualizar PIN</button></div>
+  <div class="notice">Tus datos se guardan localmente en este dispositivo. No se envían a un servidor. Usa “Descargar copia de seguridad” regularmente y no borres los datos del navegador.</div>
+ </section>
+ <footer>Mi Finanzas 15/30 · Datos guardados en este dispositivo</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id), money=n=>'RD$'+Number(n||0).toLocaleString('es-DO',{minimumFractionDigits:2,maximumFractionDigits:2});
+let db, records=[], settings={salary15:15000,salary30:13227};
+const req=indexedDB.open('MiFinanzas1530',1);
+req.onupgradeneeded=e=>{let d=e.target.result;d.createObjectStore('records',{keyPath:'id',autoIncrement:true});d.createObjectStore('settings')};
+req.onsuccess=async e=>{db=e.target.result;await loadAll();initLock()};
+function tx(store,mode='readonly'){return db.transaction(store,mode).objectStore(store)}
+function getAll(store){return new Promise((res,rej)=>{let r=tx(store).getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+function getSetting(k){return new Promise(res=>{let r=tx('settings').get(k);r.onsuccess=()=>res(r.result)})}
+function putSetting(k,v){return new Promise(res=>{let t=db.transaction('settings','readwrite');t.objectStore('settings').put(v,k);t.oncomplete=res})}
+async function loadAll(){records=await getAll('records');settings.salary15=(await getSetting('salary15'))??15000;settings.salary30=(await getSetting('salary30'))??13227}
+async function digest(s){let b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+async function initLock(){let hash=await getSetting('pinHash');$('lockText').textContent=hash?'Introduce tu PIN para abrir la aplicación.':'Crea un PIN de 4 a 8 dígitos para proteger tus finanzas.';$('unlock').onclick=async()=>{let p=$('pin').value;if(!/^\d{4,8}$/.test(p)){$('pinError').textContent='El PIN debe tener entre 4 y 8 dígitos.';return}let h=await digest(p);if(hash&&h!==hash){$('pinError').textContent='PIN incorrecto.';return}if(!hash)await putSetting('pinHash',h);$('lock').classList.add('hidden');startApp()}}
+function startApp(){let now=new Date(),m=now.toISOString().slice(0,7);$('month').value=m;$('date').value=now.toISOString().slice(0,10);$('salary15').value=settings.salary15;$('salary30').value=settings.salary30;render()}
+function monthRecords(){return records.filter(r=>r.date?.slice(0,7)===$('month').value)}
+function sum(arr,type,period){return arr.filter(r=>r.type===type&&(!period||r.period===period)).reduce((a,r)=>a+Number(r.amount),0)}
+function render(){let a=monthRecords(),i15=sum(a,'income','15')+(settings.salary15&&!a.some(r=>r.type==='income'&&r.period==='15'&&r.category==='Salario')?0:0),i30=sum(a,'income','30'),e=sum(a,'expense'),s=sum(a,'saving');
+let planned15=settings.salary15,planned30=settings.salary30;
+let actual15=sum(a,'income','15'),actual30=sum(a,'income','30');
+let inc15=actual15||planned15,inc30=actual30||planned30;
+let ex15=sum(a,'expense','15'),ex30=sum(a,'expense','30'),sv15=sum(a,'saving','15'),sv30=sum(a,'saving','30');
+$('monthLabel').textContent=$('month').value||'Selecciona mes';$('incomeTotal').textContent=money(inc15+inc30);$('expenseTotal').textContent=money(e);$('savingTotal').textContent=money(s);$('balance').textContent=money(inc15+inc30-e-s);$('available').textContent=money(inc15+inc30-e-s);
+[['i15',inc15],['e15',ex15],['s15',sv15],['a15',inc15-ex15-sv15],['i30',inc30],['e30',ex30],['s30',sv30],['a30',inc30-ex30-sv30]].forEach(([id,v])=>$(id).textContent=money(v));
+let sorted=[...a].sort((x,y)=>y.date.localeCompare(x.date)||y.id-x.id);$('recent').innerHTML=sorted.slice(0,5).map(itemHTML).join('')||'Todavía no hay movimientos este mes.';$('historyList').innerHTML=sorted.map(itemHTML).join('')||'Sin movimientos.';
+$('reportSummary').innerHTML=`<p>Ingresos: <b class="green">${money(inc15+inc30)}</b></p><p>Gastos: <b class="red">${money(e)}</b></p><p>Ahorros: <b>${money(s)}</b></p><p>Balance: <b>${money(inc15+inc30-e-s)}</b></p><p class="muted">Quincena 15: ${money(inc15-ex15-sv15)} disponible · Quincena 30: ${money(inc30-ex30-sv30)} disponible</p>`;
+}
+function itemHTML(r){let sign=r.type==='income'?'+':'−',cl=r.type==='income'?'green':r.type==='expense'?'red':'';return `<div class="item"><div class="row"><div><b>${esc(r.desc)}</b><div class="muted">${esc(r.category)} · ${r.date} · Día ${r.period}</div></div><b class="${cl}">${sign}${money(r.amount)}</b></div><div class="row"><span class="muted">${esc(r.note||'')}</span><button class="danger" onclick="removeRecord(${r.id})">Eliminar</button></div></div>`}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+window.removeRecord=async id=>{await new Promise(res=>{let t=db.transaction('records','readwrite');t.objectStore('records').delete(id);t.oncomplete=res});records=await getAll('records');render()}
+$('save').onclick=async()=>{let desc=$('desc').value.trim(),amount=Number($('amount').value);if(!desc||amount<=0||!$('date').value){alert('Completa descripción, monto y fecha.');return}let r={desc,amount,type:$('type').value,period:$('period').value,date:$('date').value,category:$('category').value,note:$('note').value};await new Promise(res=>{let t=db.transaction('records','readwrite');t.objectStore('records').add(r);t.oncomplete=res});records=await getAll('records');$('desc').value='';$('amount').value='';$('note').value='';render();showTab('home')};
+$('saveSettings').onclick=async()=>{settings.salary15=Number($('salary15').value)||0;settings.salary30=Number($('salary30').value)||0;await putSetting('salary15',settings.salary15);await putSetting('salary30',settings.salary30);render();alert('Ingresos previstos guardados.')};
+$('changePin').onclick=async()=>{let p=$('newPin').value;if(!/^\d{4,8}$/.test(p)){alert('El PIN debe tener entre 4 y 8 dígitos.');return}await putSetting('pinHash',await digest(p));$('newPin').value='';alert('PIN actualizado.')};
+function showTab(tab){document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));$(tab).classList.remove('hidden');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));render()}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));$('month').onchange=render;
+$('csv').onclick=()=>{let a=monthRecords(),rows=[['Fecha','Tipo','Descripción','Categoría','Quincena','Monto','Nota'],...a.map(r=>[r.date,r.type,r.desc,r.category,r.period,r.amount,r.note||''])];download('reporte-'+$('month').value+'.csv',rows.map(row=>row.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\n'),'text/csv;charset=utf-8')};
+$('backup').onclick=()=>download('respaldo-mi-finanzas.json',JSON.stringify({records,settings},null,2),'application/json');
+function download(name,data,type){let blob=new Blob(['\ufeff',data],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
+</body></html>
